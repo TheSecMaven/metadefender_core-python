@@ -1,9 +1,10 @@
 # Metadefender Core 
 Query a file, hash, or IP and store the data in a local SQL Database using the OPSWAT Metadefender Core API
+https://www.metadefender.com/public-api#!/about
 
 # How to Use
 ## feed_collect.py
- This simple script will pull the top 1,000 new malware hash signatures, including MD5, SHA1, and SHA256 from the metadefender site. These new malicious hashes have been spotted on the networks of Metadefender Cloud users within the last 24 hours. It then stores this data in a file named 'live_feed-<CURRENT_TIME>'. This would allow for the creation of a database for an entire day so that if a new malicious file appeared on your site at the end of the day, but was only on the feed at 8am, it would still get stopped. 
+ This simple script will pull the top 1,000 new malware hash signatures, including MD5, SHA1, and SHA256 from the metadefender site. These new malicious hashes have been spotted on the networks of Metadefender Cloud users within the last 24 hours. It then stores this data in a file named 'live_feed-<CURRENT_TIME>'. This would allow for the creation of a database for an entire day so that if a new malicious file appeared on your site at the end of the day, but was only on the feed at 8am, it would still get stopped. <br>
 `python feed_collect.py` 
 
 ## query_metadefender.py
