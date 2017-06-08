@@ -47,7 +47,7 @@ def get_md5(filename):
 
 
 if __name__ == "__main__":
-#X-Force API Key and Password associated with your IBMID
+#Metadefender API Key and Password associated with your IBMID
     password ='apikey <YOUR_API_KEY>'
     get_or_post = 0
 
