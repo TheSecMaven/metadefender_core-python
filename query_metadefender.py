@@ -85,7 +85,6 @@ if ( options.s_ip is not "none" ):
     all_json = send_request(password,ip,apiurl,get_or_post)
 
 if(all_json['data']['detected_by'] > 0):
-    print "We had a Detection"
 categories = []
 for source in all_json['data']['scan_results']:
     for entry in source['results']:
