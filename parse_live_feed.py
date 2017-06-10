@@ -89,7 +89,7 @@ def get_current_info(column_number,review_count,Provided_IP,all_json):          
 
 if __name__ == "__main__":
     path = sys.argv[1]
-    onlyfiles = [f for f in listdir(path)]
+    onlyfiles = [f for f in listdir(path) if f.endswith('.json')]
     for feed_file in onlyfiles:
         print feed_file
         all_json = json.loads(open(path + feed_file).read())
@@ -103,9 +103,5 @@ if __name__ == "__main__":
             update_table(4,entry['threat_name'],entry['md5'])
 
 
-
-
-
-
-
-
+if len(sys.argv[1:]) == 0:
+    print "Please provide the directory that contains all of your JSON feeds that you would like to have parsed into DB as an argument. 'python parse_live_feed.py <PATH>'"
