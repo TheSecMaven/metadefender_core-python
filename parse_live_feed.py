@@ -38,6 +38,12 @@ def send_request(apikey,ip,url,get_or_post):
     write_json.write(json.dumps(all_json,indent=4,sort_keys=True))
     return all_json
 
+def date_parse(date_string):          #This function parses the date that comes from the raw JSON output and puts it in a Month/Day/Year format
+
+    parsed_date = dateutil.parser.parse(date_string).strftime("%x")
+    return str(parsed_date)
+
+
 def get_md5(filename):
     try:
         f = open(filename,"rb")
@@ -64,10 +70,6 @@ def update_table(column_number,input_string,Provided_md5):              #This fu
     add_2table = session.query(MD5).filter(MD5.md5 == Provided_md5).one()
     setattr(add_2table,str(literal_column(str(columner1))),str(input_string))   #Update historic table with new information
     session.commit()
-
-def date_parse(date_string):                          #This function parses the date that comes from the raw JSON output and puts it in a Month/Day/Year format
-    parsed_date = dateutil.parser.parse(date_string).strftime("%x")
-    return parsed_date
 
 def get_current_info(column_number,review_count,Provided_IP,all_json):             #This function pulls current information from JSON output for a handful of keys
  
@@ -97,7 +99,7 @@ if __name__ == "__main__":
             print "1"
             check_md5_exist(entry['md5'])    
             update_table(0,entry['file_type_category'],entry['md5'])
-            update_table(5,entry['published'],entry['md5'])
+            update_table(5,date_parse(entry['published']),entry['md5'])
             update_table(2,entry['sha1'],entry['md5'])
             update_table(3,entry['sha256'],entry['md5'])
             update_table(4,entry['threat_name'],entry['md5'])

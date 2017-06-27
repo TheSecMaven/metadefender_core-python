@@ -19,12 +19,12 @@ from sqlalchemy import types
 from sqlalchemy import exists
 import dateutil.parser
 from sqlalchemy.sql.expression import literal_column
-
+import os
 engine = create_engine('sqlite:///IP_Report.db')   #Setup the Database
 DBSession = sessionmaker(bind = engine)
 session = DBSession()           #Must be able to query database
 all_json = 0
-
+os.chdir('/downloads')
 def send_request(apikey,ip,url,get_or_post,string):
     write_json = open(sys.argv[2] + "-" +  string + ".json","w")
     output = 0
@@ -48,7 +48,7 @@ def get_md5(filename):
 
 if __name__ == "__main__":
 #Metadefender API Key and Password associated with your IBMID
-    password ='apikey e912c6be8177a3d9f8101301a450f235'
+    password =
     get_or_post = 0
 
 
