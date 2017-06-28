@@ -66,8 +66,11 @@ if __name__ == "__main__":
     parser.add_option("--sha256", "--sha256", dest="s_sha256" , default="None",
                       help="Search for a sha256 hash within the database", metavar="ipaddress")
 (options, args) = parser.parse_args()
+
+
 total_entry = 0
 total_count = 0
+
 if options.all1 is not "None" and options.daterange is not "None" and options.s_md5 is not "None":
     
     ranges = session.query(MD5).filter(MD5.Published > dateutil.parser.parse(options.all1).strftime("%M/%d/%Y")).all()
@@ -98,11 +101,12 @@ if options.all1 is not "None" and options.daterange is not "None" and options.s_
     exit() 
 
 if options.all1 is not "None" and options.daterange is not "None":
-    print "THISONE"
+    
     for hashentry in session.query(MD5).all():
         if (compare_dates(options.all1,hashentry.Published) == 1 or  compare_dates(options.daterange,hashentry.Published) == -1): 
              total_entry += 1
              continue
+    
         else:
             print datelist
             print "TOTAL Entries: " + str(total_entry)
@@ -112,24 +116,30 @@ if options.all1 is not "None" and options.daterange is not "None":
             print "SHA1: " + hashentry.sha1
             print "SHA256: " + hashentry.sha256
             print "Threat Name: " + hashentry.threat_name
+    
             if (hashentry.Published in datelist):
                 datelist[hashentry.Published] += 1 
                 print "Published: " + hashentry.Published
                 total_count += 1
+    
             else:
                 datelist[hashentry.Published] = 1
                 print "Published: " + hashentry.Published
                 total_count += 1
             total_entry += 1
+    
         entry_count(total_count,total_entry)
+   
     print datelist
     exit()
+
 if options.all1 is not "None":
 
     for hashentry in session.query(MD5).all():
-        if (compare_dates(options.all1,hashentry.Published) == 1): 
+        if (compare_dates(options.all1,hashentry.Published) == 1 or compare_dates(options.all1,hashentry.Published) == -1): 
             total_entry += 1
             continue
+
         else:
             print "TOTAL Entries: " + str(total_entry)
             print "Total Entries in Range: " + str(total_count)
@@ -138,16 +148,22 @@ if options.all1 is not "None":
             print "SHA1: " + hashentry.sha1
             print "SHA256: " + hashentry.sha256
             print "Threat Name: " + hashentry.threat_name
+
             if (hashentry.Published in datelist):
                 datelist[hashentry.Published] += 1 
                 print "Published: " + hashentry.Published
                 total_count += 1
+
             else:
                 datelist[hashentry.Published] = 1
                 print "Published: " + hashentry.Published
                 total_count += 1
+
             total_entry += 1
+
         entry_count(total_count,total_entry)
+
     print datelist
+
 if len(sys.argv[1:]) == 0:
     parser.print_help()
