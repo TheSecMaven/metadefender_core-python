@@ -19,15 +19,20 @@ DBSession = sessionmaker(bind = engine)
 DBSession.bind = engine
 session = DBSession()
 # Make a query to find all Persons in the database
-
+def entry_count(counts,entry_count):
+    if(entry_count > 1):
+        print "Matching Entries: " + str(entry_count)
+    if(counts > 1):
+        print "Total Entries Searched: " + str(counts)
 def compare_dates(date1,date2):
- 
     newdate1 = dateutil.parser.parse(date1).strftime("%x")
     newdate2 = dateutil.parser.parse(date2).strftime('%x')
     if (newdate1 > newdate2):
         return 1
     elif (newdate1 < newdate2):
         return -1
+    elif (newdate1 == newdate2):
+        return 0
 datelist = {}
 columns = ["md5","sha1","sha256","threat_name","Published"]
 # Retrieve one Address whose person field is point to the person object
@@ -49,24 +54,53 @@ def print_Published(string):   #This function is used to print the date of revie
 
 if __name__ == "__main__":
     parser = OptionParser()
-    parser.add_option("--all", "--all", dest="all1", default="none",  
+    parser.add_option("--all", "--all", dest="all1", default="None",  
                       help="Print all elements of an entry that came after a provided published date D/M/YEAR", metavar="all")         #Prints all elements of the provided IP address
-    parser.add_option("--range", "--range", dest="daterange", default="none",  
+    parser.add_option("--range", "--range", dest="daterange", default="None",  
                       help="Print all elements of an entry that came after a provided published date D/M/YEAR with --all and before the date provided here D/M/YEAR", metavar="all")         #Prints all elements of the provided IP address
  
-    parser.add_option("--md5", "--md5", dest="s_md5", default="none", 
+    parser.add_option("--md5", "--md5", dest="s_md5", default="None", 
                       help="search for a sha1 hash within the database", metavar="current")
-    parser.add_option("--sha1", "--sha1", dest="s_sha1" , default="none",
+    parser.add_option("--sha1", "--sha1", dest="s_sha1" , default="None",
                       help="Search for a sha1 hash within the database", metavar="category")
-    parser.add_option("--sha256", "--sha256", dest="s_sha256" , default="none",
+    parser.add_option("--sha256", "--sha256", dest="s_sha256" , default="None",
                       help="Search for a sha256 hash within the database", metavar="ipaddress")
 (options, args) = parser.parse_args()
 total_entry = 0
 total_count = 0
-if options.all1 is not "None" and options.daterange is not "None":
+if options.all1 is not "None" and options.daterange is not "None" and options.s_md5 is not "None":
+    
+    ranges = session.query(MD5).filter(MD5.Published > dateutil.parser.parse(options.all1).strftime("%M/%d/%Y")).all()
+   
+    for hashentry in ranges:
+    # if (compare_dates(options.all1,hashentry.Published) == 1 and compare_dates(options.daterange,hashentry.Published) == 1): 
+        #     total_entry += 1
+         #    continue
+       # else:
+        if(hashentry.md5 == options.s_md5):
+                print "_______________________"
+                print "MD5: " + hashentry.md5
+                print "SHA1: " + hashentry.sha1
+                print "SHA256: " + hashentry.sha256
+                print "Threat Name: " + hashentry.threat_name
+                if (hashentry.Published in datelist):
+                    datelist[hashentry.Published] += 1 
+                    print "Published: " + hashentry.Published
+                    total_count += 1
+                else:
+                    datelist[hashentry.Published] = 1
+                    print "Published: " + hashentry.Published
+                    total_count += 1
+                total_entry += 1
+        entry_count(total_count,total_entry)
 
+    print datelist
+    exit() 
+
+if options.all1 is not "None" and options.daterange is not "None":
+    print "THISONE"
     for hashentry in session.query(MD5).all():
-        if (compare_dates(options.all1,hashentry.Published) == 1 and compare_dates(options.daterange,hashentry.Published) == 1): 
+        if (compare_dates(options.all1,hashentry.Published) == 1 or  compare_dates(options.daterange,hashentry.Published) == -1): 
              total_entry += 1
              continue
         else:
@@ -87,9 +121,9 @@ if options.all1 is not "None" and options.daterange is not "None":
                 print "Published: " + hashentry.Published
                 total_count += 1
             total_entry += 1
-
-print datelist
-
+        entry_count(total_count,total_entry)
+    print datelist
+    exit()
 if options.all1 is not "None":
 
     for hashentry in session.query(MD5).all():
@@ -113,7 +147,7 @@ if options.all1 is not "None":
                 print "Published: " + hashentry.Published
                 total_count += 1
             total_entry += 1
-
-print datelist
+        entry_count(total_count,total_entry)
+    print datelist
 if len(sys.argv[1:]) == 0:
     parser.print_help()
